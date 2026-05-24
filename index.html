@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Random Photo</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+    }
+
+    img {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.75s ease;
+    }
+
+    img.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <img id="photo" />
+
+  <script>
+    async function loadImage() {
+      try {
+        const res = await fetch("https://api.bonjourr.fr/unsplash/photos/random");
+        const data = await res.json();
+
+        const url =
+          data?.urls?.full ||
+          data?.urls?.regular ||
+          data?.urls?.small;
+
+        const img = document.getElementById("photo");
+        img.src = url;
+
+        img.onload = () => img.classList.add("show");
+      } catch (e) {
+        document.body.style.background = "black";
+        console.error("Failed to load image", e);
+      }
+    }
+
+    loadImage();
+  </script>
+</body>
+</html>
