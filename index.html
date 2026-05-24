@@ -19,7 +19,7 @@
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      transition: opacity 0.75s ease;
+      transition: opacity 1.5s ease;
     }
 
     img.show {
@@ -31,8 +31,13 @@
   <img id="photo" />
 
   <script>
+    const img = document.getElementById("photo");
+
     async function loadImage() {
       try {
+        // fade out before loading new image
+        img.classList.remove("show");
+
         const res = await fetch("https://api.bonjourr.fr/unsplash/photos/random");
         const data = await res.json();
 
@@ -41,17 +46,20 @@
           data?.urls?.regular ||
           data?.urls?.small;
 
-        const img = document.getElementById("photo");
-        img.src = url;
+        // wait a tiny bit so fade-out is visible
+        setTimeout(() => {
+          img.src = url;
+        }, 300);
 
         img.onload = () => img.classList.add("show");
+
       } catch (e) {
-        document.body.style.background = "black";
         console.error("Failed to load image", e);
       }
     }
 
     loadImage();
+    setInterval(loadImage, 2 * 60 * 1000); // every 2 minutes
   </script>
 </body>
 </html>
